@@ -10,6 +10,7 @@ timer = datetime.datetime.now()
 client = commands.Bot(command_prefix='^')
 
 
+
 def name(man):
     return str(man.name)
 
