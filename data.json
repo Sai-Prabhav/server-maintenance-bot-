@@ -1,0 +1,17 @@
+{
+    "score": {
+        "test": 100,
+        "ankith101.rar": 100,
+        "GALHA": 100,
+        "Mareks": 100,
+        "saiprabhav": 105,
+        "Srijan_coder": 100,
+        "Vishy": 100,
+        "Aadi": 100
+    },
+    "answer": {
+        "01/27/21": {
+            "0x416b617368": "re.search\n\nmy search pattern >>>  ([A-z]+)(\\d+)\n\n[A-z]+  matches  a-z character (Uppercase as well as lowercase)\n\\d+ matches 0-9 digits \n\n+ is used to search repetitions \n\n()() created the tuples of searched pattern output"
+        }
+    }
+}
