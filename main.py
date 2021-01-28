@@ -10,7 +10,6 @@ timer = datetime.datetime.now()
 client = commands.Bot(command_prefix='^')
 
 
-
 def name(man):
     return str(man.name)
 
@@ -32,7 +31,9 @@ data = load()
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
     print(load()['score'])
-
+    print('hi')
+    
+          
 
 @client.event
 async def on_message(message):
