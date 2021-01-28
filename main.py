@@ -2,26 +2,13 @@ import discord
 import random
 import os
 import json
+from lib import *
 from discord.ext import commands
 from keep_alive import keep_alive
 import datetime
 
 timer = datetime.datetime.now()
 client = commands.Bot(command_prefix='^')
-
-
-def name(man):
-    return str(man.name)
-
-
-def load():
-    with open('data.json', "r") as jsonFile:
-        return json.load(jsonFile)
-
-
-def save():
-    with open('data.json', "w") as jsonFile:
-        json.dump(data, jsonFile, indent=4)
 
 
 data = load()
@@ -31,9 +18,7 @@ data = load()
 async def on_ready():
     print(f'{client.user} has connected to Discord!')
     print(load()['score'])
-    print('hi')
-    
-          
+
 
 @client.event
 async def on_message(message):
@@ -58,16 +43,20 @@ async def on_member_remove(member):
     print(f'{member} has left')
 
 
+
 @client.command()
-@commands.has_any_role("Admin", "Owner")
-async def clear(ctx, x=5):
-    await ctx.channel.purge(limit=x)
+async def answer(ctx, *, ans):
+
+    if not(data["answer"][timer.strftime("%x")]):
+        data["answer"][timer.strftime("%x")] = {}
+    data["answer"][timer.strftime("%x")][name(ctx.author)] = ans
+    save(data)
+
 
 
 @client.command()
 async def inbot(ctx, ):
     await ctx.send('plz use your command in #bots its prohibited to use it here')
-
 
 
 @client.command()
@@ -85,14 +74,6 @@ async def toss(ctx):
     await ctx.send(random.choice(['heads', 'tails']))
 
 
-@client.command()
-async def answer(ctx, *, ans):
-	
-    if not(data["answer"][timer.strftime("%x")]):
-      data["answer"][timer.strftime("%x")]={}
-    data["answer"][timer.strftime("%x")][name(ctx.author)] = ans
-    save()
-
 
 @client.command()
 async def score(ctx, man: discord.Member):
@@ -103,6 +84,15 @@ async def score(ctx, man: discord.Member):
     else:
         data["score"][name(man)] = 100
         await ctx.send(data["score"][name(man)])
+
+
+@client.command()
+async def scores(ctx):
+    matches = data['score']
+    for x in matches:
+
+        await ctx.send(f"{x} --> {matches[x]}")
+    save(data)
 
 
 @client.command()
@@ -119,18 +109,14 @@ async def warn(ctx, man: discord.Member):
 
     else:
         data['score'][name(man)] = 100
-    save()
+    save(data)
     await ctx.send(data['score'][name(man)])
 
 
 @client.command()
-async def scores(ctx):
-    matches = data['score']
-    for x in matches:
-
-        await ctx.send(f"{x} --> {matches[x]}")
-    save()
-
+@commands.has_any_role("Admin", "Owner")
+async def clear(ctx, x=5):
+    await ctx.channel.purge(limit=x)
 
 @client.command()
 @commands.has_any_role("Admin", "Owner")
@@ -141,7 +127,7 @@ async def givescore(ctx, man: discord.Member):
         data['score'][name(man)] += 10
     else:
         data['score'][name(man)] = 100
-    save()
+    save(data)
     await ctx.send(data['score'][name(man)])
 
 
@@ -163,19 +149,8 @@ async def unmute(ctx, member: discord.Member):
 @client.command()
 async def rules(ctx):
     await ctx.send(
-        '''#1 - Be nice to one another, respect each other's opinions.
-# 2 - Dont send hateful messages.
-# 3 - No nsfw or inappropriate messages should be sent.
-# 4 - If anyone encounters any issue, Ping the @Admin they will address the issue.
-# 5 - suggestions can be given in #suggestions 
-# 6 - No spamming please or pinging of @everyone 
-# 7 - No racist or homophobic messages, photos ,videos etc
-# 8 - This is an English speaking server so speak in English to the best of your ability
-
-People who do not abide with these rules will be banned or muted from the server
-Have a good time at this server!''')
+        rules())
 
 
 keep_alive()
 client.run(os.getenv('TOKEN'))
-
